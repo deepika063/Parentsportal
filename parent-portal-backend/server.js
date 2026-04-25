@@ -17,19 +17,18 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/student', studentRoutes);
 
-// Database connection
+// DB + Server start
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
 const MONGO_URI = process.env.MONGO_URI;
 
 mongoose.connect(MONGO_URI)
   .then(() => {
     console.log('Connected to MongoDB Atlas');
+
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
+
   })
   .catch((error) => {
     console.error('MongoDB connection error:', error);
