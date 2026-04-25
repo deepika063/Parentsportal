@@ -1,0 +1,30 @@
+# Node.js dependencies
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+*.code-workspace
+
+# Dependency directories for subprojects
+parent-portal/node_modules/
+parent-portal-backend/node_modules/
+
+# Build outputs
+parent-portal/dist/
+parent-portal/.vite/
+
+# Misc
+*.log

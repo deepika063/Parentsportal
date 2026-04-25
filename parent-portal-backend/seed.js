@@ -1,0 +1,216 @@
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import Student from './models/Student.js';
+import Attendance from './models/Attendance.js';
+import CGPA from './models/CGPA.js';
+import Academic from './models/Academic.js';
+import Notification from './models/Notification.js';
+import Financial from './models/Financial.js';
+import Contact from './models/Contact.js';
+
+// Import frontend mock data (we'll define it here for seed)
+dotenv.config();
+
+// MOCK DATA FROM FRONTEND
+const students = [
+  {
+    id: "STU001",
+    regNumber: "22BCS001",
+    name: "Arjun Reddy",
+    parentPhone: "9876543210",
+    parentName: "Ravi Reddy",
+    branch: "Computer Science",
+    year: 3,
+    section: "A",
+    email: "231fa04b35@gmail.com",
+    parentEmail: "231fa04b35@gmail.com",
+    photo: null,
+    otp: "123456",
+  },
+];
+
+const attendanceData = {
+  STU001: {
+    studentId: "STU001",
+    overall: 74,
+    semesterWise: [
+      { sem: "Sem 1", attendance: 88 },
+      { sem: "Sem 2", attendance: 82 },
+      { sem: "Sem 3", attendance: 76 },
+      { sem: "Sem 4", attendance: 79 },
+      { sem: "Sem 5", attendance: 74 },
+    ],
+    subjectWise: [
+      { subject: "Data Structures", code: "CS301", attended: 38, total: 52, percent: 73 },
+      { subject: "Operating Systems", code: "CS302", attended: 42, total: 52, percent: 80 },
+      { subject: "Database Management", code: "CS303", attended: 35, total: 52, percent: 67 },
+      { subject: "Computer Networks", code: "CS304", attended: 40, total: 52, percent: 77 },
+      { subject: "Software Engineering", code: "CS305", attended: 30, total: 52, percent: 58 },
+      { subject: "Machine Learning", code: "CS306", attended: 45, total: 52, percent: 86 },
+    ],
+  },
+};
+
+const cgpaData = {
+  STU001: {
+    studentId: "STU001",
+    overallCGPA: 7.8,
+    yearWise: [
+      { year: "Year 1", cgpa: 8.2 },
+      { year: "Year 2", cgpa: 7.9 },
+      { year: "Year 3", cgpa: 7.4 },
+    ],
+    semesterWise: [
+      { sem: "Sem 1", sgpa: 8.4, credits: 24 },
+      { sem: "Sem 2", sgpa: 8.0, credits: 24 },
+      { sem: "Sem 3", sgpa: 8.1, credits: 26 },
+      { sem: "Sem 4", sgpa: 7.7, credits: 26 },
+      { sem: "Sem 5", sgpa: 7.4, credits: 28 },
+    ],
+    subjectWise: [
+      // Sem 1
+      { subject: "Mathematics I", code: "MA101", sem: "Sem 1", internal: 45, external: 85, total: 130, max: 150, grade: "A+", credits: 4, gradePoint: 10 },
+      { subject: "Applied Physics", code: "PH101", sem: "Sem 1", internal: 40, external: 70, total: 110, max: 150, grade: "A", credits: 4, gradePoint: 9 },
+      { subject: "Engineering Graphics", code: "ME101", sem: "Sem 1", internal: 38, external: 60, total: 98, max: 150, grade: "B+", credits: 3, gradePoint: 8 },
+      { subject: "Basic Electrical Engineering", code: "EE101", sem: "Sem 1", internal: 35, external: 65, total: 100, max: 150, grade: "B+", credits: 4, gradePoint: 8 },
+      { subject: "Communicative English", code: "EN101", sem: "Sem 1", internal: 48, external: 80, total: 128, max: 150, grade: "A+", credits: 3, gradePoint: 10 },
+      // Sem 2
+      { subject: "Mathematics II", code: "MA102", sem: "Sem 2", internal: 35, external: 55, total: 90, max: 150, grade: "B", credits: 4, gradePoint: 7 },
+      { subject: "Engineering Chemistry", code: "CY101", sem: "Sem 2", internal: 42, external: 75, total: 117, max: 150, grade: "A", credits: 4, gradePoint: 9 },
+      { subject: "Programming for Problem Solving", code: "CS101", sem: "Sem 2", internal: 46, external: 82, total: 128, max: 150, grade: "A+", credits: 4, gradePoint: 10 },
+      { subject: "Basic Electronics", code: "EC101", sem: "Sem 2", internal: 38, external: 62, total: 100, max: 150, grade: "B+", credits: 3, gradePoint: 8 },
+      { subject: "Environmental Science", code: "CE101", sem: "Sem 2", internal: 30, external: 50, total: 80, max: 150, grade: "C", credits: 2, gradePoint: 6 },
+      // Sem 3
+      { subject: "Data Structures", code: "CS301", sem: "Sem 3", internal: 38, external: 68, total: 106, max: 150, grade: "B+", credits: 4, gradePoint: 8 },
+      { subject: "Digital Logic Design", code: "EC301", sem: "Sem 3", internal: 40, external: 70, total: 110, max: 150, grade: "A", credits: 3, gradePoint: 9 },
+      { subject: "Discrete Mathematics", code: "MA301", sem: "Sem 3", internal: 45, external: 85, total: 130, max: 150, grade: "A+", credits: 4, gradePoint: 10 },
+      { subject: "Object Oriented Programming", code: "CS307", sem: "Sem 3", internal: 42, external: 72, total: 114, max: 150, grade: "A", credits: 4, gradePoint: 9 },
+      { subject: "Computer Organization", code: "CS308", sem: "Sem 3", internal: 35, external: 60, total: 95, max: 150, grade: "B+", credits: 3, gradePoint: 8 },
+      // Sem 4
+      { subject: "Operating Systems", code: "CS302", sem: "Sem 4", internal: 40, external: 72, total: 112, max: 150, grade: "A", credits: 4, gradePoint: 9 },
+      { subject: "Database Management", code: "CS303", sem: "Sem 4", internal: 32, external: 55, total: 87, max: 150, grade: "B", credits: 4, gradePoint: 7 },
+      { subject: "Design and Analysis of Algorithms", code: "CS309", sem: "Sem 4", internal: 38, external: 65, total: 103, max: 150, grade: "B+", credits: 4, gradePoint: 8 },
+      { subject: "Formal Languages and Automata Theory", code: "CS310", sem: "Sem 4", internal: 45, external: 75, total: 120, max: 150, grade: "A+", credits: 3, gradePoint: 10 },
+      { subject: "Probability and Statistics", code: "MA302", sem: "Sem 4", internal: 36, external: 58, total: 94, max: 150, grade: "B+", credits: 3, gradePoint: 8 },
+      // Sem 5
+      { subject: "Computer Networks", code: "CS304", sem: "Sem 5", internal: 36, external: 65, total: 101, max: 150, grade: "B+", credits: 4, gradePoint: 8 },
+      { subject: "Software Engineering", code: "CS305", sem: "Sem 5", internal: 28, external: 48, total: 76, max: 150, grade: "C", credits: 3, gradePoint: 5 },
+      { subject: "Machine Learning", code: "CS306", sem: "Sem 5", internal: 44, external: 78, total: 122, max: 150, grade: "A+", credits: 4, gradePoint: 10 },
+      { subject: "Web Technologies", code: "CS311", sem: "Sem 5", internal: 40, external: 70, total: 110, max: 150, grade: "A", credits: 3, gradePoint: 9 },
+      { subject: "Compiler Design", code: "CS312", sem: "Sem 5", internal: 38, external: 62, total: 100, max: 150, grade: "B+", credits: 4, gradePoint: 8 },
+    ],
+  },
+};
+
+const academicStatus = {
+  STU001: {
+    studentId: "STU001",
+    totalCredits: 180,
+    earnedCredits: 128,
+    backlogs: [{ subject: "Engineering Mathematics II", code: "MA102", semester: "Sem 2", attempts: 2 }],
+    repeatedSubjects: [{ subject: "Engineering Mathematics II", code: "MA102", originalSem: "Sem 2", retakeIn: "Sem 4", cleared: true }],
+    incompleteSubjects: [{ subject: "Project Work", code: "CS399", status: "Ongoing", deadline: "May 2026" }],
+    courseCompletion: { totalSemesters: 8, completedSemesters: 5, percentage: 62, expectedGraduation: "June 2026" },
+  },
+};
+
+const notifications = {
+  STU001: {
+    studentId: "STU001",
+    upcomingExams: [
+      { id: 1, subject: "Data Structures", code: "CS301", date: "2026-03-20", time: "10:00 AM", venue: "Hall A-101", type: "Mid Semester" },
+      { id: 2, subject: "Operating Systems", code: "CS302", date: "2026-03-22", time: "02:00 PM", venue: "Hall B-202", type: "Mid Semester" },
+      { id: 3, subject: "Machine Learning", code: "CS306", date: "2026-03-25", time: "10:00 AM", venue: "Lab C-301", type: "Practical" },
+      { id: 4, subject: "End Semester Exams", code: "ALL", date: "2026-05-10", time: "09:00 AM", venue: "Examination Block", type: "End Semester" },
+    ],
+    academicCalendar: [
+      { id: 1, event: "Mid Semester Exams", startDate: "2026-03-20", endDate: "2026-03-28", type: "exam" },
+      { id: 2, event: "Spring Break / Ugadi Holiday", startDate: "2026-03-29", endDate: "2026-04-05", type: "holiday" },
+      { id: 3, event: "Internal Assessment Submission", startDate: "2026-04-15", endDate: "2026-04-15", type: "deadline" },
+      { id: 4, event: "End Semester Examinations", startDate: "2026-05-10", endDate: "2026-05-25", type: "exam" },
+      { id: 5, event: "Results Declaration", startDate: "2026-06-10", endDate: "2026-06-10", type: "result" },
+      { id: 6, event: "New Semester Registration", startDate: "2026-07-01", endDate: "2026-07-05", type: "registration" },
+    ],
+    general: [
+      { id: 1, title: "Fee Payment Reminder", message: "Semester fee due by March 31, 2026", date: "2026-03-10", priority: "high" },
+      { id: 2, title: "Attendance Warning", message: "Software Engineering attendance below 60%. Attendance shortage!", date: "2026-03-12", priority: "high" },
+      { id: 3, title: "Sports Day", message: "Annual Sports Day on April 10, 2026", date: "2026-03-08", priority: "low" },
+    ],
+  },
+};
+
+const financialData = {
+  STU001: {
+    studentId: "STU001",
+    totalFee: 85000,
+    paidAmount: 60000,
+    pendingAmount: 25000,
+    dueDate: "2026-03-31",
+    scholarship: { eligible: true, type: "Merit Scholarship", amount: 15000, status: "Approved", disbursed: true, disbursedDate: "2026-01-15" },
+    paymentHistory: [
+      { id: "PAY001", date: "2025-07-10", amount: 30000, mode: "Online Transfer", status: "Paid", receipt: "RCP2025001" },
+      { id: "PAY002", date: "2025-12-05", amount: 15000, mode: "Demand Draft", status: "Paid", receipt: "RCP2025002" },
+      { id: "PAY003", date: "2026-01-15", amount: 15000, mode: "Scholarship", status: "Credited", receipt: "SCH2026001" },
+    ],
+    feeBreakup: [
+      { item: "Tuition Fee", amount: 60000 },
+      { item: "Examination Fee", amount: 5000 },
+      { item: "Lab Fee", amount: 8000 },
+      { item: "Library Fee", amount: 2000 },
+      { item: "Sports Fee", amount: 3000 },
+      { item: "Miscellaneous", amount: 7000 },
+    ],
+  },
+};
+
+const contactsData = [
+  { type: 'counsellor', contactId: 1, name: "Dr. Priya Sharma", designation: "Academic Counsellor", department: "Student Affairs", email: "priya.sharma@college.edu", phone: "9800001111", cabin: "Admin Block, Room 102", availability: "Mon-Fri, 10AM-4PM" },
+  { type: 'counsellor', contactId: 2, name: "Mr. Venkat Rao", designation: "Career Counsellor", department: "Placement Cell", email: "venkat.rao@college.edu", phone: "9800002222", cabin: "Placement Block, Room 5", availability: "Mon-Sat, 9AM-5PM" },
+  { type: 'faculty', contactId: 1, name: "Dr. Suresh Kumar", subject: "Data Structures", code: "CS301", email: "suresh.kumar@college.edu", phone: "9800003333", cabin: "CS Block, Room 201", availability: "Mon-Fri, 9AM-12PM" },
+  { type: 'faculty', contactId: 2, name: "Prof. Anitha Devi", subject: "Operating Systems", code: "CS302", email: "anitha.devi@college.edu", phone: "9800004444", cabin: "CS Block, Room 205", availability: "Mon-Fri, 2PM-5PM" },
+  { type: 'faculty', contactId: 3, name: "Dr. Ramesh Babu", subject: "Database Management", code: "CS303", email: "ramesh.babu@college.edu", phone: "9800005555", cabin: "CS Block, Room 210", availability: "Tue-Thu, 10AM-1PM" },
+  { type: 'faculty', contactId: 4, name: "Prof. Kavitha Nair", subject: "Computer Networks", code: "CS304", email: "kavitha.nair@college.edu", phone: "9800006666", cabin: "CS Block, Room 212", availability: "Mon-Wed, 11AM-2PM" },
+  { type: 'faculty', contactId: 5, name: "Dr. Mohan Das", subject: "Software Engineering", code: "CS305", email: "mohan.das@college.edu", phone: "9800007777", cabin: "CS Block, Room 215", availability: "Mon-Fri, 3PM-5PM" },
+  { type: 'faculty', contactId: 6, name: "Dr. Lakshmi Prasad", subject: "Machine Learning", code: "CS306", email: "lakshmi.prasad@college.edu", phone: "9800008888", cabin: "CS Block, Room 220", availability: "Mon-Fri, 10AM-12PM" },
+  { type: 'administration', contactId: 1, name: "Mr. Kishore Reddy", designation: "Exam Controller", email: "exam.controller@college.edu", phone: "9800009999", cabin: "Admin Block, Room 108" },
+  { type: 'administration', contactId: 2, name: "Ms. Sunitha Rao", designation: "Accounts Officer", email: "accounts@college.edu", phone: "9800010000", cabin: "Admin Block, Room 110" },
+];
+
+const seedDB = async () => {
+  try {
+    const MONGO_URI = process.env.MONGO_URI;
+    if (!MONGO_URI) {
+      console.error("MONGO_URI is missing in .env");
+      process.exit(1);
+    }
+
+    await mongoose.connect(MONGO_URI);
+    console.log("Connected to MongoDB");
+
+    // Clear existing data
+    await Student.deleteMany({});
+    await Attendance.deleteMany({});
+    await CGPA.deleteMany({});
+    await Academic.deleteMany({});
+    await Notification.deleteMany({});
+    await Financial.deleteMany({});
+    await Contact.deleteMany({});
+
+    // Insert new data
+    await Student.insertMany(students);
+    await Attendance.create(attendanceData.STU001);
+    await CGPA.create(cgpaData.STU001);
+    await Academic.create(academicStatus.STU001);
+    await Notification.create(notifications.STU001);
+    await Financial.create(financialData.STU001);
+    await Contact.insertMany(contactsData);
+
+    console.log("Database seeded successfully");
+    process.exit();
+  } catch (err) {
+    console.error("Failed to seed database:", err);
+    process.exit(1);
+  }
+};
+
+seedDB();
