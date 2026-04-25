@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { translations } from "../data/translations";
 
 const AppContext = createContext(null);
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export function AppProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -32,7 +33,7 @@ export function AppProvider({ children }) {
 
   const fetchDashboardData = async (authToken) => {
     try {
-      const response = await fetch('http://localhost:5000/api/student/dashboard', {
+      const response = await fetch(`${API_URL}/api/student/dashboard`, {
         headers: {
           'Authorization': `Bearer ${authToken}`
         }
@@ -54,7 +55,7 @@ export function AppProvider({ children }) {
 
   const verifyCredentials = async (regNumber, email) => {
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ regNumber, parentEmail: email })
@@ -75,7 +76,7 @@ export function AppProvider({ children }) {
 
   const verifyOtp = async (student, otp) => {
     try {
-      const response = await fetch('http://localhost:5000/api/auth/verify', {
+      const response = await fetch(`${API_URL}/api/auth/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ studentId: student.id, otp })

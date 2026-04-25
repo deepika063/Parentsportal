@@ -19,6 +19,7 @@ app.use('/api/student', studentRoutes);
 
 // DB + Server start
 const PORT = process.env.PORT || 5000;
+console.log("PORT VALUE:", process.env.PORT);
 const MONGO_URI = process.env.MONGO_URI;
 
 mongoose.connect(MONGO_URI)
